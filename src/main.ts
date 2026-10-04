@@ -218,7 +218,11 @@ canvas.addEventListener('pointerup', release);
 canvas.addEventListener('pointercancel', release);
 
 // ---- ツールボタン ----
-let debug = new URLSearchParams(location.search).has('debug');
+// Debug ボタンは、URL に ?debug を付けたときだけ表示する（公開版の通常の画面には出さない）。
+// 開いた直後の Debug 表示は OFF。ボタンを押すと ON になる
+const devTools = new URLSearchParams(location.search).has('debug');
+stage.classList.toggle('devtools', devTools);
+let debug = false;
 const btnDebug = document.getElementById('btn-debug')!;
 const debugPanel = document.getElementById('debug-panel')!;
 const debugStats = document.getElementById('debug-stats')!;

@@ -131,7 +131,8 @@
 ## 公開
 - [x] Cloudflare Workers（静的アセット）へデプロイ: https://game.chozo.net/nekoneko/（Worker 名 `nekoneko`）
 - [ ] game.chozo.net のトップページ（ゲーム一覧）に「ねこねこゲーム」へのリンクを追加（トップページは別の Worker の管轄）
-- [ ] 開発用の `__game` やDebugボタンを公開版で隠すか検討
+- [x] Debug ボタンは URL に `?debug` を付けたときだけ表示（公開版の通常画面からは消した）
+- [ ] 開発用の `__game` を公開版で無効にするか検討（告知動画の撮影でも使っている）
 - [ ] 公開リポジトリ（github.com/chozo/nekoneko）のライセンスを決める（LICENSE ファイルがないと、他の人は再利用できない）
 
 ## 告知
