@@ -47,6 +47,13 @@ SNS告知用のショート動画（縦 1080×1920 / 30fps / 約29秒 / H.264 + 
 
 https://github.com/chozo/nekoneko
 
+## ライセンス
+
+[MIT License](./LICENSE)（Copyright (c) 2026 chozo）です。改変・再配布・商用利用ができます。利用するときは、著作権表示とライセンス文を残してください。
+
+- 使っているライブラリは、それぞれのライセンスに従います。フォント（M PLUS Rounded 1c）はリポジトリに含めず、Google Fonts から読み込んでいます（SIL Open Font License）。
+- 「ねこねこゲーム」「chozo」の名前やロゴを、作者が関わっているように見える形で使うことはご遠慮ください。
+
 ## 操作方法
 
 | 操作 | 内容 |
