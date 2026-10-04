@@ -1,0 +1,15 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "nekoneko",
+  "compatibility_date": "2026-10-01",
+  // game.chozo.net の他のゲームと同じく、パス配下だけで公開する
+  "workers_dev": false,
+  "observability": { "enabled": true, "head_sampling_rate": 1 },
+  // Vite のビルド結果を静的アセットとして配信（Worker スクリプトなし）。
+  // URL の /nekoneko/ に合わせ、dist/nekoneko/ に出力している
+  "assets": { "directory": "./dist" },
+  "routes": [
+    { "pattern": "game.chozo.net/nekoneko", "zone_name": "chozo.net" },
+    { "pattern": "game.chozo.net/nekoneko/*", "zone_name": "chozo.net" }
+  ]
+}

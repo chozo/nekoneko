@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no" />
+    <meta name="theme-color" content="#f6efe4" />
+    <title>ねこねこゲーム</title>
+    <link rel="icon" href="/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@700;800;900&display=swap" rel="stylesheet" />
+  </head>
+  <body>
+    <div id="stage">
+      <canvas id="game"></canvas>
+      <div id="hud">
+        <div class="hud-item"><span class="label">SCORE</span><span id="score">0</span></div>
+        <div class="hud-item"><span class="label">CHAIN</span><span id="chain">-</span></div>
+      </div>
+      <button id="btn-sound" aria-label="音を消す">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path class="spk" d="M4 9.5h3.2L11.5 6v12l-4.3-3.5H4z" />
+          <path class="wave" d="M15 9.2a4 4 0 0 1 0 5.6M17.6 6.8a7.4 7.4 0 0 1 0 10.4" />
+          <path class="mute" d="M15.5 9.5l5 5M20.5 9.5l-5 5" />
+        </svg>
+      </button>
+      <div id="tools">
+        <button id="btn-debug" class="tool">Debug</button>
+        <button id="btn-rain" class="tool dev" title="10匹まとめて落とす">+10</button>
+        <button id="btn-clear" class="tool dev">Clear</button>
+      </div>
+      <div id="title">
+        <h1 class="logo">
+          <span class="logo-main">ねこねこ</span><span class="logo-sub">ゲーム</span>
+        </h1>
+        <div class="title-bottom">
+          <div class="title-best">BEST <b id="title-best">0</b></div>
+          <button id="btn-start">スタート</button>
+          <ul class="title-howto">
+            <li>同じ色の猫を<b>4匹</b>くっつけると、出ていくよ</li>
+            <li>線より上まで詰まったらおしまい</li>
+          </ul>
+        </div>
+      </div>
+      <div id="gameover" hidden>
+        <div class="go-card">
+          <div class="go-title">GAME OVER</div>
+          <div class="go-sub">もう入らにゃい…</div>
+          <div class="go-row"><span>SCORE</span><b id="go-score">0</b></div>
+          <div class="go-row best"><span>BEST</span><b id="go-best">0</b></div>
+          <div class="go-newbest" id="go-newbest" hidden>NEW RECORD!</div>
+          <button id="btn-restart">Restart</button>
+          <button id="btn-to-title" class="go-link">タイトルへ</button>
+        </div>
+      </div>
+      <div id="debug-panel" hidden>
+        <div id="debug-stats"></div>
+        <div id="debug-sliders"></div>
+        <button id="btn-reset-params" class="tool">Reset params</button>
+      </div>
+    </div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

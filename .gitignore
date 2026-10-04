@@ -1,0 +1,6 @@
+node_modules/
+dist/
+.DS_Store
+.wrangler/
+# 告知動画の出力（動画はリポジトリとは別に管理する）
+/promo/

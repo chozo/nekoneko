@@ -1,0 +1,417 @@
+* {
+  box-sizing: border-box;
+}
+html,
+body {
+  margin: 0;
+  height: 100%;
+  background: #2d2a32;
+  overflow: hidden;
+  overscroll-behavior: none;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
+  font-family: system-ui, -apple-system, 'Hiragino Sans', sans-serif;
+}
+body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+/* 9:16 のゲーム領域。幅・高さどちらが制約でも全体が収まる */
+#stage {
+  container-type: size; /* 中の文字をゲーム画面の幅（cqw）基準で決める */
+  position: relative;
+  height: min(100dvh, calc(100vw * 16 / 9));
+  aspect-ratio: 9 / 16;
+  background: linear-gradient(#fbf4e8, #f1e4cf);
+  overflow: hidden;
+  touch-action: none;
+}
+#game {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+#hud {
+  position: absolute;
+  top: calc(1.2% + env(safe-area-inset-top, 0px));
+  left: 3%;
+  right: 3%;
+  display: flex;
+  justify-content: space-between;
+  pointer-events: none;
+}
+.hud-item {
+  display: flex;
+  flex-direction: column;
+  color: #5a4636;
+  font-weight: 800;
+  font-size: clamp(14px, 3.4vh, 26px);
+  line-height: 1;
+}
+.hud-item .label {
+  font-size: 0.45em;
+  letter-spacing: 0.15em;
+  opacity: 0.7;
+}
+.hud-item:last-child {
+  align-items: flex-end;
+}
+#tools {
+  position: absolute;
+  right: 2%;
+  bottom: calc(1.2% + env(safe-area-inset-bottom, 0px));
+  display: flex;
+  gap: 6px;
+}
+.tool {
+  font: 600 11px system-ui, sans-serif;
+  padding: 5px 8px;
+  border: 1px solid rgba(90, 70, 54, 0.35);
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.7);
+  color: #5a4636;
+  cursor: pointer;
+}
+.tool.on {
+  background: #5a4636;
+  color: #fff;
+}
+#debug-panel {
+  position: absolute;
+  left: 2%;
+  bottom: 5.5%;
+  width: 52%;
+  max-height: 48%;
+  overflow-y: auto;
+  padding: 6px 8px;
+  background: rgba(20, 20, 28, 0.78);
+  color: #e8e8f0;
+  border-radius: 8px;
+  font: 10px ui-monospace, Menlo, monospace;
+}
+#debug-stats {
+  white-space: pre;
+  margin-bottom: 4px;
+}
+#debug-sliders label {
+  display: grid;
+  grid-template-columns: 1fr 34px;
+  align-items: center;
+  margin: 1px 0;
+}
+#debug-sliders input {
+  grid-column: 1 / -1;
+  width: 100%;
+  margin: 0;
+  height: 14px;
+}
+
+/* CHAIN の数字がぽんっと弾む */
+#chain.pop {
+  animation: chain-pop 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+  color: #ff6b5a;
+}
+@keyframes chain-pop {
+  0% {
+    transform: scale(1);
+  }
+  40% {
+    transform: scale(1.6);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* ---- ゲームオーバー ---- */
+#gameover {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(60, 45, 35, 0.35);
+  animation: go-fade 0.4s ease-out;
+}
+#gameover[hidden] {
+  display: none;
+}
+.go-card {
+  width: 74%;
+  padding: 7% 6% 6%;
+  border-radius: 22px;
+  background: #fffaf2;
+  box-shadow: 0 10px 30px rgba(60, 40, 20, 0.25);
+  border: 3px solid #e9d9c2;
+  text-align: center;
+  color: #5a4636;
+  animation: go-pop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.go-title {
+  font-weight: 900;
+  font-size: clamp(22px, 5.2vh, 40px);
+  letter-spacing: 0.04em;
+  background: linear-gradient(#ffb347, #ff5f6d);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.go-sub {
+  font-size: clamp(11px, 1.9vh, 15px);
+  opacity: 0.75;
+  margin: 2px 0 10%;
+}
+.go-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-weight: 800;
+  font-size: clamp(12px, 2.2vh, 17px);
+  padding: 2% 4%;
+}
+.go-row b {
+  font-size: 1.6em;
+}
+.go-row.best {
+  opacity: 0.7;
+}
+.go-newbest {
+  font-weight: 900;
+  color: #ff6b5a;
+  font-size: clamp(11px, 2vh, 15px);
+  margin-top: 1%;
+  animation: chain-pop 0.8s ease-in-out infinite;
+}
+#btn-restart {
+  margin-top: 9%;
+  width: 100%;
+  min-height: 48px;
+  border: none;
+  border-radius: 999px;
+  font: 800 clamp(16px, 2.8vh, 22px) system-ui, sans-serif;
+  color: #fff;
+  background: linear-gradient(#ffa95e, #ff7a59);
+  box-shadow: 0 4px 0 #d9603f;
+  cursor: pointer;
+}
+#btn-restart:active {
+  transform: translateY(3px);
+  box-shadow: 0 1px 0 #d9603f;
+}
+@keyframes go-fade {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes go-pop {
+  from {
+    transform: scale(0.6);
+    opacity: 0;
+  }
+}
+
+/* ---- タイトル画面 ---- */
+#title {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 4.5cqh;
+  padding: 11cqh 7cqw 0;
+  background: linear-gradient(rgba(251, 244, 232, 0.95) 0%, rgba(251, 244, 232, 0.7) 45%, rgba(251, 244, 232, 0) 62%);
+  font-family: 'M PLUS Rounded 1c', 'Hiragino Maru Gothic ProN', 'Hiragino Sans', system-ui, sans-serif;
+  color: #5a4636;
+}
+#title[hidden] {
+  display: none;
+}
+/* タイトル中は HUD を隠す */
+#stage.is-title #hud {
+  visibility: hidden;
+}
+.logo {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  white-space: nowrap;
+  font-weight: 900;
+  line-height: 1;
+  animation: logo-muni 2.6s ease-in-out infinite;
+  transform-origin: 50% 100%;
+}
+.logo-main {
+  font-size: 17cqw;
+  color: #ffffff;
+  -webkit-text-stroke: 0.16em #7a5236;
+  paint-order: stroke fill;
+  letter-spacing: 0.02em;
+  filter: drop-shadow(0 0.08em 0 rgba(122, 82, 54, 0.35));
+}
+/* 「ゲーム」は小さく控えめに */
+.logo-sub {
+  margin-top: 0.35em;
+  font-size: 6.2cqw;
+  font-weight: 800;
+  letter-spacing: 0.3em;
+  padding-left: 0.3em; /* letter-spacing の右側の余白とつり合わせる */
+  color: #8a6448;
+}
+
+@keyframes logo-muni {
+  0%,
+  70%,
+  100% {
+    transform: scale(1, 1);
+  }
+  76% {
+    transform: scale(1.08, 0.9);
+  }
+  84% {
+    transform: scale(0.96, 1.05);
+  }
+  92% {
+    transform: scale(1.02, 0.98);
+  }
+}
+.title-bottom {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.8cqh;
+  padding: 3.4cqh 6cqw 3cqh;
+  border-radius: 20px;
+  background: rgba(255, 250, 242, 0.88);
+  box-shadow: 0 6px 20px rgba(60, 40, 20, 0.15);
+  border: 2px solid #ecdcc6;
+}
+.title-best {
+  font-weight: 800;
+  font-size: 3.8cqw;
+  opacity: 0.75;
+}
+.title-best b {
+  font-size: 1.4em;
+  margin-left: 0.3em;
+}
+#btn-start {
+  width: 100%;
+  min-height: max(48px, 7.5cqh);
+  border: none;
+  border-radius: 999px;
+  font: 900 6.4cqw 'M PLUS Rounded 1c', 'Hiragino Maru Gothic ProN', system-ui, sans-serif;
+  letter-spacing: 0.1em;
+  color: #fff;
+  background: linear-gradient(#ffa95e, #ff7a59);
+  box-shadow: 0 5px 0 #d9603f;
+  cursor: pointer;
+  animation: start-bob 1.6s ease-in-out infinite;
+}
+#btn-start:active {
+  transform: translateY(4px);
+  box-shadow: 0 1px 0 #d9603f;
+  animation: none;
+}
+@keyframes start-bob {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-3px);
+  }
+}
+.title-howto {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-weight: 700;
+  font-size: 3.3cqw;
+  line-height: 1.7;
+  text-align: center;
+  opacity: 0.85;
+}
+.title-howto b {
+  color: #ff6b5a;
+}
+
+/* ゲームオーバー画面の「タイトルへ」 */
+.go-link {
+  margin-top: 4%;
+  width: 100%;
+  min-height: 40px;
+  border: none;
+  background: none;
+  font: 800 clamp(13px, 2.2vh, 17px) system-ui, sans-serif;
+  color: #8a6a52;
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+  cursor: pointer;
+}
+
+/* ---- スマホ向け ---- */
+button {
+  touch-action: manipulation; /* ダブルタップ拡大をしない */
+}
+#debug-panel {
+  touch-action: pan-y; /* パネルの中だけはスクロールできる */
+}
+/* 開発用の +10 / Clear は Debug ON のときだけ */
+#tools .dev {
+  display: none;
+}
+#stage.debug #tools .dev {
+  display: inline-block;
+}
+/* スマホ（縦長の画面）では、ゲームの外側の帯もゲームの背景色に */
+@media (max-width: 600px) {
+  html,
+  body {
+    background: #f6ecdc;
+  }
+}
+
+/* ---- 音のON/OFF ---- */
+#btn-sound {
+  position: absolute;
+  left: 2%;
+  bottom: calc(1.2% + env(safe-area-inset-bottom, 0px));
+  width: max(36px, 9cqw);
+  height: max(36px, 9cqw);
+  padding: 0;
+  border: 1px solid rgba(90, 70, 54, 0.3);
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.75);
+  cursor: pointer;
+  z-index: 5;
+}
+#btn-sound svg {
+  width: 62%;
+  height: 62%;
+  fill: none;
+  stroke: #5a4636;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+#btn-sound .spk {
+  fill: #5a4636;
+}
+#btn-sound .mute {
+  display: none;
+}
+#btn-sound.off .wave {
+  display: none;
+}
+#btn-sound.off .mute {
+  display: inline;
+  stroke: #ff6b5a;
+}
